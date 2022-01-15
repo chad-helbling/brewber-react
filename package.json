@@ -1,0 +1,20 @@
+{
+  "name": "brewber",
+  "version": "1.0.0",
+  "description": "brewber",
+  "main": "index.js",
+  "dependencies": {
+    "concurrently": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "local-api": "cd api && node server.js",
+    "local-client": "cd client && npm start",
+    "local": "concurrently \"npm run local-api\" \"npm run local-client\""
+  },
+  "author": "chadhelbling",
+  "license": "ISC"
+}
