@@ -32,6 +32,8 @@
         "workbox-streams": "^5.1.4"
     },
     "scripts": {
+        "local-client": "npm start",
+        "local-serve": "npm run build && serve -s build",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",

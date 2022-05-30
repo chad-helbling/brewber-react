@@ -8,13 +8,12 @@
         "prettier": "^2.5.1"
     },
     "devDependencies": {
-        "nodemon": "^1.17.3"
+        "nodemon": "^1.19.4"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "local-api": "cd api && node server.js",
-        "local-client": "cd client && npm start",
-        "local": "concurrently \"npm run local-api\" \"npm run local-client\"",
+        "local": "concurrently \"npm run local-api --prefix=./api\" \"npm run local-client --prefix=./client\"",
+        "prod": "concurrently \"npm run api --prefix=./api\" \"npm run local-serve --prefix=./client\"",
         "pretty": "prettier --write \"./**/*.{js,jsx,json}\""
     },
     "author": "chadhelbling",
