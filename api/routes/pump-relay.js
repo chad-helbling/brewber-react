@@ -1,7 +1,7 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
-const { togglePumpRelay } = require('../components/arduino-interface.js');
+import { togglePumpRelay } from '../components/arduino-interface.js';
 
 router.get('/', (req, res) => {
     try {
@@ -13,4 +13,4 @@ router.get('/', (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

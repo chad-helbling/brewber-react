@@ -1,10 +1,11 @@
 // Get dependencies
-const express = require('express');
-const path = require('path');
-const http = require('http');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const { setupArduino } = require('./components/arduino-interface');
+import express, { static } from 'express';
+import { join } from 'path';
+import { createServer } from 'http';
+import cors from 'cors';
+import { json, urlencoded } from 'body-parser';
+import { setupArduino } from './components/arduino-interface.js';
+import api from './routes/api.js';
 
 //setup arduino
 setupArduino();
@@ -33,14 +34,15 @@ app.use((req, res, next) => {
 app.use(cors());
 
 // Parsers for POST data
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(json());
+app.use(urlencoded({ extended: false }));
 
 // Point static path to dist
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(static(join(__dirname, 'dist')));
 
 // Set our api routes
-require('./routes/api')(app);
+// Set our api routes
+api(app);
 
 /**
  * Get port from environment and store in Express.
@@ -51,7 +53,7 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-const server = http.createServer(app);
+const server = createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.

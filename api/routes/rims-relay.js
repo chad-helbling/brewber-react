@@ -1,12 +1,12 @@
 import { Router } from 'express';
 const router = Router();
 
-import { getTemperature } from '../components/arduino-interface.js';
+import { toggleRimsRelay } from '../components/arduino-interface.js';
 
 router.get('/', (req, res) => {
     try {
-        const temperature = getTemperature();
-        res.send({ temperature });
+        toggleRimsRelay();
+        res.send({ success: true });
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
