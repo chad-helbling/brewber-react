@@ -89,7 +89,13 @@ export default function ControlPanel({
                 <div className="grid grid-rows-3 gap-4">
                     <label htmlFor="mashtemp">
                         <span className="pr-4">Mash Temp</span>
-                        <input type="text" name="mashtemp" value={mashTemp} onChange={updateMashTemp} id="mashtemp" />
+                        <input
+                            type="text"
+                            name="mashtemp"
+                            defaultValue={mashTemp}
+                            onBlur={updateMashTemp}
+                            id="mashtemp"
+                        />
                     </label>
                     <ToggleButton
                         onChange={toggleTrackTemperature}

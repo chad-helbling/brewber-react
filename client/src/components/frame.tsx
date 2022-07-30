@@ -5,12 +5,12 @@ import { useState } from 'react';
 import Axios from 'axios';
 
 export default function Frame() {
-    const [mashTemp, setMashTemp] = useState('150');
+    const [targetMashTemp, setTargetMashTemp] = useState('150');
     const [trackTemperature, setTrackTemperature] = useState(true);
 
-    async function sendMashTemp(mashTemp: string) {
-        await Axios.post('http://localhost:8080/temperature/set-mash-temp', { mashTemp });
-        setMashTemp(mashTemp);
+    async function sendMashTemp(targetMashTemp: string) {
+        await Axios.post('http://localhost:8080/temperature/set-mash-temp', { targetMashTemp });
+        setTargetMashTemp(targetMashTemp);
     }
 
     return (
@@ -22,11 +22,11 @@ export default function Frame() {
 
             <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-3 gap-1">
                 <div className="flex col-span-2 row-span-1 bg-gray-200 m-6 p-2 rounded shadow-lg">
-                    <TemperatureGraph mashTemp={mashTemp} trackTemperature={trackTemperature} />
+                    <TemperatureGraph targetMashTemp={targetMashTemp} trackTemperature={trackTemperature} />
                 </div>
                 <div className="flex justify-evenly col-span- bg-gray-200 m-6 p-2 rounded shadow-lg">
                     <ControlPanel
-                        mashTemp={mashTemp}
+                        mashTemp={targetMashTemp}
                         updateMashTemp={(event: any) => sendMashTemp(event.target.value)}
                         trackTemperature={trackTemperature}
                         toggleTrackTemperature={(active: boolean) => {

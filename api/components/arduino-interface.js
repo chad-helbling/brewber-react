@@ -16,9 +16,10 @@ const MASH_THERMOMETER_ADDRESS = 89666443;
 const RIMS_THERMOMETER_ADDRESS = 819848;
 const RIMS_RELAY_PIN = 9;
 const PUMP_RELAY_PIN = 10;
+const AUTO_CIRCULATE_INTERVAL = 1000 * 60 * 5; // 5 mins
 
 const mashState = {
-    targetTemperature: 95,
+    targetTemperature: 150,
     mashTemperature: 0,
     rimsTemperature: 0,
 };
@@ -69,7 +70,7 @@ function setupThermometer() {
     console.log('done setting up mash thermometer...');
 
     mashThermometer.on('change', (temperatureData) => {
-        console.log('mash', temperatureData);
+        // console.log('mash', temperatureData);
         // console.log(`Thermometer B at address: 0x${address.toString(16)}`);
         mashState.mashTemperature = (temperatureData && temperatureData.fahrenheit) || 0;
     });
@@ -135,19 +136,18 @@ function autoCirculate() {
     const { pump, pumpStartTime, pumpEndTime } = controlState;
 
     const now = Date.now();
-    const fiveMinutes = 1000 * 60 * 1;
     const millisSinceStart = now - pumpStartTime;
     const millisSinceEnd = now - pumpEndTime;
 
-    const shouldTurnOffPump = pump && millisSinceStart > fiveMinutes;
-    const shouldTurnOnPump = !pump && millisSinceEnd > fiveMinutes;
+    const shouldTurnOffPump = pump && millisSinceStart > AUTO_CIRCULATE_INTERVAL;
+    const shouldTurnOnPump = !pump && millisSinceEnd > AUTO_CIRCULATE_INTERVAL;
 
     if (shouldTurnOffPump || shouldTurnOnPump) {
         return togglePumpRelay();
     }
 }
 
-function shutdownAutoMash() {
+async function shutdownAutoMash() {
     const { rims, pump } = controlState;
 
     if (rims) {
@@ -166,17 +166,17 @@ async function runAutoMash() {
     const { autoMash, rims, pump } = controlState;
 
     if (!autoMash) {
-        shutdownAutoMash();
+        await shutdownAutoMash();
         return;
     }
 
     const roundedMashTemp = Math.round(mashTemperature);
     const shouldRunRIMS = roundedMashTemp < targetTemperature;
 
-    console.log(JSON.stringify(controlState));
-    console.log(`roundedMashTemp = ${roundedMashTemp}`);
-    console.log(`targetTemperature = ${targetTemperature}`);
-    console.log(`shouldRunRIMS = ${shouldRunRIMS}`);
+    // console.log(JSON.stringify(controlState));
+    // console.log(`roundedMashTemp = ${roundedMashTemp}`);
+    // console.log(`targetTemperature = ${targetTemperature}`);
+    // console.log(`shouldRunRIMS = ${shouldRunRIMS}`);
 
     // shut off rims if we're at the target temp
     if (!shouldRunRIMS && rims) {

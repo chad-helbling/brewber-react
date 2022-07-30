@@ -5,8 +5,8 @@ import { getTemperatureState, setTemperatureState } from '../components/arduino-
 
 router.get('/', (req, res) => {
     try {
-        const temperature = getTemperatureState();
-        res.send({ temperature });
+        const temperatureState = getTemperatureState();
+        res.send({ temperatureState });
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
@@ -16,9 +16,9 @@ router.get('/', (req, res) => {
 router.post('/set-mash-temp', (req, res) => {
     try {
         const { body } = req;
-        const { mashTemperature } = body;
+        const { targetMashTemp } = body;
 
-        setTemperatureState(mashTemperature);
+        setTemperatureState(targetMashTemp);
         res.send({ success: true });
     } catch (error) {
         console.log(error);

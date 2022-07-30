@@ -37,10 +37,10 @@ interface AddDataProps {
     label: string;
     temperatureData: number;
     line: number;
-    mashTemp: number;
+    targetMashTemp: number;
 }
 
-function addData({ chart, label, temperatureData, line, mashTemp }: AddDataProps) {
+function addData({ chart, label, temperatureData, line, targetMashTemp }: AddDataProps) {
     if (line === 0) {
         chart?.data?.labels?.push(label);
     }
@@ -49,30 +49,30 @@ function addData({ chart, label, temperatureData, line, mashTemp }: AddDataProps
     const mashTempDataSet = chart.data.datasets[1];
 
     // set line color based on mashTemp
-    if (temperatureData < mashTemp - 2) {
+    if (temperatureData < targetMashTemp - 2) {
         temperatureDataSet.backgroundColor = '#007bff';
         temperatureDataSet.borderColor = '#007bff';
-    } else if (mashTemp - 2 < temperatureData && temperatureData < mashTemp + 2) {
+    } else if (targetMashTemp - 2 < temperatureData && temperatureData < targetMashTemp + 2) {
         temperatureDataSet.backgroundColor = '#008000';
         temperatureDataSet.borderColor = '	#008000';
-    } else if (temperatureData > mashTemp + 2) {
+    } else if (temperatureData > targetMashTemp + 2) {
         temperatureDataSet.backgroundColor = '#FF0000';
         temperatureDataSet.borderColor = '	#FF0000';
     }
 
     // set values
     temperatureDataSet.data.push(temperatureData);
-    mashTempDataSet.data.push(mashTemp);
+    mashTempDataSet.data.push(targetMashTemp);
 
     chart.update();
 }
 
 interface TemperatureGraphProps {
-    mashTemp: string;
+    targetMashTemp: string;
     trackTemperature: boolean;
 }
 
-export function TemperatureGraph({ mashTemp, trackTemperature }: TemperatureGraphProps) {
+export function TemperatureGraph({ targetMashTemp, trackTemperature }: TemperatureGraphProps) {
     const [temperatureInterval, setTemperatureInterval] = useState(0);
 
     const chartRef = useRef<ChartJS>(null);
@@ -83,12 +83,12 @@ export function TemperatureGraph({ mashTemp, trackTemperature }: TemperatureGrap
         const chartLabels = chart?.data?.labels || [];
         if (!chart) return;
 
-        if (mashTemp) {
-            chart.data.datasets[1].data = chartLabels.map(() => Number(mashTemp));
+        if (targetMashTemp) {
+            chart.data.datasets[1].data = chartLabels.map(() => Number(targetMashTemp));
         }
 
         chart.update();
-    }, [mashTemp]);
+    }, [targetMashTemp]);
 
     useEffect(() => {
         if (!trackTemperature) {
@@ -102,14 +102,15 @@ export function TemperatureGraph({ mashTemp, trackTemperature }: TemperatureGrap
             if (!chart) return;
 
             const temperatureResult = await getTemperature();
-            const { temperature } = temperatureResult.data;
+            const { temperatureState } = temperatureResult.data;
+            const { mashTemperature, targetTemperature } = temperatureState;
 
             addData({
                 chart,
-                label: `${temperature}`,
-                temperatureData: temperature,
+                label: `${mashTemperature}`,
+                temperatureData: mashTemperature,
                 line: 0,
-                mashTemp: Number(mashTemp),
+                targetMashTemp: Number(targetTemperature),
             });
         }, 10000);
 
