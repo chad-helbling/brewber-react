@@ -55,13 +55,29 @@ export default function ControlPanel({
         setAutoMashToggle(active);
     }
 
-    function getControlState() {
-        return Axios.get('http://localhost:8080/control-panel');
+    interface ControlPanelState {
+        pump: boolean;
+        rims: boolean;
+        autoMash: boolean;
+    }
+
+    async function getControlState(): Promise<ControlPanelState> {
+        const controlStateResult = await Axios.get('http://localhost:8080/control-panel');
+        const { data } = controlStateResult;
+
+        return data;
     }
 
     useEffect(() => {
-        // get temperature data and to chart on interval
-        setInterval(async () => {}, 1000);
+        // get control state from server so we can have multiple clients
+        // i.e. I want to use my phone too
+        setInterval(async () => {
+            const { pump, rims, autoMash } = await getControlState();
+
+            if (pump) setPumpToggle(pump);
+            if (rims) setRimsToggle(rims);
+            if (autoMash) setAutoMashToggle(autoMash);
+        }, 1000);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
