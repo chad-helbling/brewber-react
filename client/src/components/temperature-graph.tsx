@@ -1,7 +1,7 @@
 import { Chart as ChartJS, registerables } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import { useEffect, useRef, useState } from 'react';
-import { getTemperature } from './utils/api-interface';
+import Axios from 'axios';
 
 ChartJS.register(...registerables);
 
@@ -27,6 +27,10 @@ export const data = {
         },
     ],
 };
+
+function getTemperature() {
+    return Axios.get('http://localhost:8080/temperature');
+}
 
 interface AddDataProps {
     chart: ChartJS;

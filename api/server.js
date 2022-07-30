@@ -1,9 +1,10 @@
 // Get dependencies
-import express, { static } from 'express';
+import express from 'express';
 import { join } from 'path';
 import { createServer } from 'http';
 import cors from 'cors';
-import { json, urlencoded } from 'body-parser';
+import bodyParser from 'body-parser';
+const { json, urlencoded } = bodyParser;
 import { setupArduino } from './components/arduino-interface.js';
 import api from './routes/api.js';
 
@@ -38,7 +39,7 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 
 // Point static path to dist
-app.use(static(join(__dirname, 'dist')));
+// app.use(express.static(join(__dirname, 'dist')));
 
 // Set our api routes
 // Set our api routes

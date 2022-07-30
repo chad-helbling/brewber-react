@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ToggleButton from './ui-components/toggle-button';
 import Axios from 'axios';
 
@@ -17,11 +17,10 @@ export default function ControlPanel({
 }: ControlPanelProps) {
     const [pumpToggle, setPumpToggle] = useState(false);
     const [rimsToggle, setRimsToggle] = useState(false);
+    const [autoMashToggle, setAutoMashToggle] = useState(false);
 
     async function sendPumpToggle(active: boolean) {
-        const pumpRelayResult = await Axios.get(
-            'http://localhost:8080/pump-relay'
-        );
+        const pumpRelayResult = await Axios.get('http://localhost:8080/pump-relay');
         const { data } = pumpRelayResult;
 
         if (data.success === 'false') {
@@ -33,16 +32,38 @@ export default function ControlPanel({
     }
 
     async function sendRimsToggle(active: boolean) {
-        // const pumpRelayResult = await Axios.get('http://localhost:8080/pump-relay');
-        // const { data } = pumpRelayResult;
+        const rimsRelayResult = await Axios.get('http://localhost:8080/rims-relay');
+        const { data } = rimsRelayResult;
 
-        // if (data.success === 'false') {
-        //   console.error('error toggling pump relay');
-        //   return;
-        // }
+        if (data.success === 'false') {
+            console.error('error toggling rims relay');
+            return;
+        }
 
         setRimsToggle(active);
     }
+
+    async function sendAutoMashToggle(active: boolean) {
+        const autoMashResult = await Axios.get('http://localhost:8080/auto-mash');
+        const { data } = autoMashResult;
+
+        if (data.success === 'false') {
+            console.error('error toggling auto mash');
+            return;
+        }
+
+        setAutoMashToggle(active);
+    }
+
+    function getControlState() {
+        return Axios.get('http://localhost:8080/control-panel');
+    }
+
+    useEffect(() => {
+        // get temperature data and to chart on interval
+        setInterval(async () => {}, 1000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // eslint-disable-next-line jsx-a11y/alt-text
     return (
@@ -52,29 +73,16 @@ export default function ControlPanel({
                 <div className="grid grid-rows-3 gap-4">
                     <label htmlFor="mashtemp">
                         <span className="pr-4">Mash Temp</span>
-                        <input
-                            type="text"
-                            name="mashtemp"
-                            value={mashTemp}
-                            onChange={updateMashTemp}
-                            id="mashtemp"
-                        />
+                        <input type="text" name="mashtemp" value={mashTemp} onChange={updateMashTemp} id="mashtemp" />
                     </label>
                     <ToggleButton
                         onChange={toggleTrackTemperature}
                         buttonState={trackTemperature}
                         buttonLabel="Track Temperature"
                     />
-                    <ToggleButton
-                        onChange={sendPumpToggle}
-                        buttonState={pumpToggle}
-                        buttonLabel="Pump"
-                    />
-                    <ToggleButton
-                        onChange={sendRimsToggle}
-                        buttonState={rimsToggle}
-                        buttonLabel="RIMS"
-                    />
+                    <ToggleButton onChange={sendPumpToggle} buttonState={pumpToggle} buttonLabel="Pump" />
+                    <ToggleButton onChange={sendRimsToggle} buttonState={rimsToggle} buttonLabel="RIMS" />
+                    <ToggleButton onChange={sendAutoMashToggle} buttonState={autoMashToggle} buttonLabel="Auto Mash" />
                 </div>
             </form>
         </div>
