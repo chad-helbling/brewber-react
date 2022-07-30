@@ -83,7 +83,7 @@ function setupThermometer() {
     console.log('done setting up rims thermometer...');
 
     rimsThermometer.on('change', (temperatureData) => {
-        console.log('rims', temperatureData);
+        // console.log('rims', temperatureData);
         // console.log(`Thermometer B at address: 0x${address.toString(16)}`);
         mashState.rimsTemperature = (temperatureData && temperatureData.fahrenheit) || 0;
     });
