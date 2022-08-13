@@ -155,14 +155,16 @@ async function shutdownAutoMash() {
     }
 
     if (pump) {
-        // todo maybe restart autoCirculate logic instead??
         await setTimeout(10000);
+
+        // set pump end time to autocirculate logic runs
+        controlState.pumpEndTime = 0;
         togglePumpRelay();
     }
 }
 
 async function runAutoMash() {
-    const { targetTemperature, mashTemperature } = mashState;
+    const { targetTemperature, mashTemperature, rimsTemperature } = mashState;
     const { autoMash, rims, pump } = controlState;
 
     if (!autoMash) {
@@ -173,13 +175,17 @@ async function runAutoMash() {
     const roundedMashTemp = Math.round(mashTemperature);
     const shouldRunRIMS = roundedMashTemp < targetTemperature;
 
+    // use the rims temp probe for shutoff
+    const roundedRimsTemp = Math.round(rimsTemperature);
+    const shouldStopRIMS = roundedRimsTemp > targetTemperature;
+
     // console.log(JSON.stringify(controlState));
     // console.log(`roundedMashTemp = ${roundedMashTemp}`);
     // console.log(`targetTemperature = ${targetTemperature}`);
     // console.log(`shouldRunRIMS = ${shouldRunRIMS}`);
 
     // shut off rims if we're at the target temp
-    if (!shouldRunRIMS && rims) {
+    if (shouldStopRIMS && rims) {
         toggleRimsRelay();
     }
 
