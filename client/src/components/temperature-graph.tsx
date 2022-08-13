@@ -10,7 +10,7 @@ export const options = {
 };
 
 export const data = {
-    labels: ['initial'],
+    labels: [],
     datasets: [
         {
             label: 'Temperature',
@@ -20,8 +20,17 @@ export const data = {
             lineTension: 0.25,
         },
         {
-            label: 'Target',
+            label: 'Target High',
             data: [],
+            pointRadius: 0, // hide points
+            fill: 2,
+            borderColor: 'rgb(53, 162, 235)',
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        },
+        {
+            label: 'Target Low',
+            data: [],
+            pointRadius: 0, // hide points
             borderColor: 'rgb(53, 162, 235)',
             backgroundColor: 'rgba(53, 162, 235, 0.5)',
         },
@@ -41,12 +50,13 @@ interface AddDataProps {
 }
 
 function addData({ chart, label, temperatureData, line, targetMashTemp }: AddDataProps) {
-    if (line === 0) {
-        chart?.data?.labels?.push(label);
-    }
+    if (!temperatureData || !targetMashTemp) return;
+
+    chart?.data?.labels?.push(label);
 
     const temperatureDataSet = chart.data.datasets[line];
-    const mashTempDataSet = chart.data.datasets[1];
+    const targetTempHighDataSet = chart.data.datasets[1];
+    const targetTempLowDataSet = chart.data.datasets[2];
 
     // set line color based on mashTemp
     if (temperatureData < targetMashTemp - 2) {
@@ -62,7 +72,8 @@ function addData({ chart, label, temperatureData, line, targetMashTemp }: AddDat
 
     // set values
     temperatureDataSet.data.push(temperatureData);
-    mashTempDataSet.data.push(targetMashTemp);
+    targetTempHighDataSet.data.push(targetMashTemp + 0.5);
+    targetTempLowDataSet.data.push(targetMashTemp - 0.5);
 
     chart.update();
 }
@@ -78,17 +89,17 @@ export function TemperatureGraph({ targetMashTemp, trackTemperature }: Temperatu
     const chartRef = useRef<ChartJS>(null);
 
     // add line to target mash temp
-    useEffect(() => {
-        const chart = chartRef.current;
-        const chartLabels = chart?.data?.labels || [];
-        if (!chart) return;
+    // useEffect(() => {
+    //     const chart = chartRef.current;
+    //     const chartLabels = chart?.data?.labels || [];
+    //     if (!chart) return;
 
-        if (targetMashTemp) {
-            chart.data.datasets[1].data = chartLabels.map(() => Number(targetMashTemp));
-        }
+    //     if (targetMashTemp) {
+    //         chart.data.datasets[1].data = chartLabels.map(() => Number(targetMashTemp));
+    //     }
 
-        chart.update();
-    }, [targetMashTemp]);
+    //     chart.update();
+    // }, [targetMashTemp]);
 
     useEffect(() => {
         if (!trackTemperature) {
@@ -105,9 +116,12 @@ export function TemperatureGraph({ targetMashTemp, trackTemperature }: Temperatu
             const { temperatureState } = temperatureResult.data;
             const { mashTemperature, targetTemperature } = temperatureState;
 
+            const now = new Date();
+            const current = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
             addData({
                 chart,
-                label: `${mashTemperature}`,
+                label: `${current}`,
                 temperatureData: mashTemperature,
                 line: 0,
                 targetMashTemp: Number(targetTemperature),
