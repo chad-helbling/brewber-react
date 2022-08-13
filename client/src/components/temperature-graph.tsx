@@ -7,6 +7,11 @@ ChartJS.register(...registerables);
 
 export const options = {
     responsive: true,
+    scales: {
+        y: {
+            grace: '50%',
+        },
+    },
 };
 
 export const data = {
@@ -88,19 +93,6 @@ export function TemperatureGraph({ targetMashTemp, trackTemperature }: Temperatu
 
     const chartRef = useRef<ChartJS>(null);
 
-    // add line to target mash temp
-    // useEffect(() => {
-    //     const chart = chartRef.current;
-    //     const chartLabels = chart?.data?.labels || [];
-    //     if (!chart) return;
-
-    //     if (targetMashTemp) {
-    //         chart.data.datasets[1].data = chartLabels.map(() => Number(targetMashTemp));
-    //     }
-
-    //     chart.update();
-    // }, [targetMashTemp]);
-
     useEffect(() => {
         if (!trackTemperature) {
             clearInterval(temperatureInterval);
@@ -136,7 +128,7 @@ export function TemperatureGraph({ targetMashTemp, trackTemperature }: Temperatu
 
     return (
         <div className="h-full w-full">
-            <h1 className="text-grey text-3xl ml-5 mt-5 font-mono">Temperature</h1>
+            <h1 className="text-grey text-3xl ml-5 mt-5 font-mono">Mash Temperature</h1>
             <Chart ref={chartRef} type="line" data={data} options={options} />
         </div>
     );
