@@ -63,9 +63,9 @@ export default function ControlPanel({
 
     async function getControlState(): Promise<ControlPanelState> {
         const controlStateResult = await Axios.get('http://localhost:8080/control-panel');
-        const { data } = controlStateResult;
+        const { controlState } = controlStateResult.data;
 
-        return data;
+        return controlState;
     }
 
     useEffect(() => {
@@ -74,9 +74,9 @@ export default function ControlPanel({
         setInterval(async () => {
             const { pump, rims, autoMash } = await getControlState();
 
-            if (pump) setPumpToggle(pump);
-            if (rims) setRimsToggle(rims);
-            if (autoMash) setAutoMashToggle(autoMash);
+            setPumpToggle(pump);
+            setRimsToggle(rims);
+            setAutoMashToggle(autoMash);
         }, 1000);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
